@@ -1,32 +1,134 @@
+document.addEventListener("DOMContentLoaded",
+    function(event){
+	
+	let dinos = [];
+	
+	function getDinoObjects(jsonData){
+		// From dino json data, create Dino objects and return them as list
+		for(let i=0; i<jsonData.length; i++){
+			dino = jsonData[i];
+			dinos.push(new Dino(dino.species, dino.weight, dino.height, dino.diet, dino.where, dino.when, dino.fact));
+		}
+	}	
+	
+	// Create Dino Constructor
+	function Dino(species, weight, height, diet, where, when, fact) {
+		this.species = species;
+		this.weight = weight;
+		this.height = height;
+		this.diet = diet;
+		this.where = where;
+		this.when = when;
+		this.fact = fact;
+	}
 
-    // Create Dino Constructor
-
-
-    // Create Dino Objects
-
-
-    // Create Human Object
-
-    // Use IIFE to get human data from form
-
-
-    // Create Dino Compare Method 1
-    // NOTE: Weight in JSON file is in lbs, height in inches. 
-
-    
-    // Create Dino Compare Method 2
-    // NOTE: Weight in JSON file is in lbs, height in inches.
-
-    
-    // Create Dino Compare Method 3
-    // NOTE: Weight in JSON file is in lbs, height in inches.
-
-
-    // Generate Tiles for each Dino in Array
-  
-        // Add tiles to DOM
-
-    // Remove form from screen
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
 
 
-// On button click, prepare and display infographic
+	// Create Dino Objects
+	fetch("dino.json")
+	.then(response => response.json())
+	.then(json => getDinoObjects(json["Dinos"]));
+	
+	
+	// Create Dino Compare Method 1
+	// NOTE: Weight in JSON file is in lbs, height in inches. 
+	Dino.prototype.cmpHeight =
+	    function(height){
+            return this.height == height;
+	    }
+	
+	// Create Dino Compare Method 2
+	// NOTE: Weight in JSON file is in lbs, height in inches.
+	Dino.prototype.cmpDiet =
+	    function(diet){
+            return this.diet == diet;
+	    }
+	
+	// Create Dino Compare Method 3
+	// NOTE: Weight in JSON file is in lbs, height in inches.
+	Dino.prototype.cmpHeight =
+	    function(weight){
+            return this.weight == weight;
+	    }
+	
+	
+	// On button click, prepare and display infographic
+	document.querySelector("#btn")
+	  .addEventListener("click", compareWithDinasour);
+	
+	function compareWithDinasour(event){
+	    // Create Human Object
+	    // Use IIFE to get human data from form
+	     let human = (function(){
+             hName = document.getElementById("name").value;
+             hHeightft = document.getElementById("feet").value;
+             hHeightin = document.getElementById("inches").value;
+             hWeightlb = document.getElementById("weight").value;
+             hDiet = document.getElementById("diet").value;
+	    	 return {
+                 name : hName,
+                 height: parseInt(hHeightft * 12) + parseInt(hHeightin),
+                 weight: parseInt(hWeightlb),
+                 diet : hDiet
+	     	};
+	    })();
+
+	// Remove form from screen
+    document.getElementById("dino-compare").style.visibility = "hidden"; 
+	    
+	// Generate Tiles for each Dino in Array
+    let factIdx = getRandomInt(dinos.length);
+    let fact = dinos[factIdx]["fact"];
+	
+    function addTile(imageURL, factTxt, titleTxt){
+        let item = document.createElement("div");
+        let imageItem = document.createElement("img");
+        let titleItem = document.createElement("h2");
+
+        item.className = "grid-item";
+        imageItem.src = imageURL;
+        titleItem.innerText = titleTxt
+
+        item.appendChild(titleItem);
+        item.appendChild(imageItem);
+        
+        if(factTxt){
+            let factItem = document.createElement("p");
+            factItem.innerText = factTxt;
+            item.appendChild(factItem);
+        }
+
+        return item;
+    }
+
+	// Add tiles to DOM
+    grid = document.getElementById("grid");
+    for(let idx=0;idx<9;idx++){ 
+        let fact;
+        let img_path;
+        if(idx < 4 ){
+            image_basename =  dinos[idx].species;
+            fact = dinos[idx].fact;
+            title = image_basename;
+        }
+        else if(idx == 4){
+            // Set human at middle position
+            image_basename = "Human";
+            title = human.name
+            fact = null
+        }
+        else{
+            image_basename =  dinos[idx -1].species;
+            fact = dinos[idx-1].fact;
+            title = image_basename;
+        }
+        img_path = "images/" + image_basename.toLowerCase() + ".png";
+        grid.appendChild(addTile(img_path, fact, title));
+    }
+        
+	}	
+	
+});
