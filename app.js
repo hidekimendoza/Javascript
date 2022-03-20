@@ -1,88 +1,87 @@
 document.addEventListener("DOMContentLoaded",
     function(event){
-	
-	let dinos = [];
-	
-	function getDinoObjects(jsonData){
-		// From dino json data, create Dino objects and return them as list
-		for(let i=0; i<jsonData.length; i++){
-			dino = jsonData[i];
-			dinos.push(new Dino(dino.species, dino.weight, dino.height, dino.diet, dino.where, dino.when, dino.fact));
-		}
-	}	
-	
-	// Create Dino Constructor
-	function Dino(species, weight, height, diet, where, when, fact) {
-		this.species = species;
-		this.weight = weight;
-		this.height = height;
-		this.diet = diet;
-		this.where = where;
-		this.when = when;
-		this.fact = fact;
-	}
+
+    let dinos = [];
+
+    function getDinoObjects(jsonData){
+        // From dino json data, create Dino objects and return them as list
+        for(let i=0; i<jsonData.length; i++){
+            let dino = jsonData[i];
+            dinos.push(new Dino(dino.species, dino.weight, dino.height, dino.diet, dino.where, dino.when, dino.fact));
+        }
+    }
+
+    // Create Dino Constructor
+    function Dino(species, weight, height, diet, where, when, fact) {
+        this.species = species;
+        this.weight = weight;
+        this.height = height;
+        this.diet = diet;
+        this.where = where;
+        this.when = when;
+        this.fact = fact;
+    }
 
     function getRandomInt(max) {
         return Math.floor(Math.random() * max);
     }
 
 
-	// Create Dino Objects
-	fetch("dino.json")
-	.then(response => response.json())
-	.then(json => getDinoObjects(json["Dinos"]));
-	
-	
-	// Create Dino Compare Method 1
-	// NOTE: Weight in JSON file is in lbs, height in inches. 
-	Dino.prototype.cmpHeight =
-	    function(height){
+    // Create Dino Objects
+    fetch("dino.json")
+    .then(response => response.json())
+    .then(json => getDinoObjects(json["Dinos"]));
+
+
+    // Create Dino Compare Method 1
+    // NOTE: Weight in JSON file is in lbs, height in inches.
+    Dino.prototype.cmpHeight =
+        function(height){
             return this.height == height;
-	    }
-	
-	// Create Dino Compare Method 2
-	// NOTE: Weight in JSON file is in lbs, height in inches.
-	Dino.prototype.cmpDiet =
-	    function(diet){
+        }
+
+    // Create Dino Compare Method 2
+    // NOTE: Weight in JSON file is in lbs, height in inches.
+    Dino.prototype.cmpDiet =
+        function(diet){
             return this.diet == diet;
-	    }
-	
-	// Create Dino Compare Method 3
-	// NOTE: Weight in JSON file is in lbs, height in inches.
-	Dino.prototype.cmpHeight =
-	    function(weight){
+        }
+
+    // Create Dino Compare Method 3
+    // NOTE: Weight in JSON file is in lbs, height in inches.
+    Dino.prototype.cmpHeight =
+        function(weight){
             return this.weight == weight;
-	    }
-	
-	
-	// On button click, prepare and display infographic
-	document.querySelector("#btn")
-	  .addEventListener("click", compareWithDinasour);
-	
-	function compareWithDinasour(event){
-	    // Create Human Object
-	    // Use IIFE to get human data from form
-	     let human = (function(){
-             hName = document.getElementById("name").value;
-             hHeightft = document.getElementById("feet").value;
-             hHeightin = document.getElementById("inches").value;
-             hWeightlb = document.getElementById("weight").value;
-             hDiet = document.getElementById("diet").value;
-	    	 return {
+        }
+
+
+    // On button click, prepare and display infographic
+    document.querySelector("#btn")
+      .addEventListener("click", compareWithDinasour);
+
+    function compareWithDinasour(event){
+        // Create Human Object
+        // Use IIFE to get human data from form
+         let human = (function(){
+         let hName = document.getElementById("name").value;
+         let hHeightft = document.getElementById("feet").value;
+         let hHeightin = document.getElementById("inches").value;
+         let hWeightlb = document.getElementById("weight").value;
+         let hDiet = document.getElementById("diet").value;
+             return {
                  name : hName,
                  height: parseInt(hHeightft * 12) + parseInt(hHeightin),
                  weight: parseInt(hWeightlb),
                  diet : hDiet
-	     	};
-	    })();
+             };
+        })();
 
-	// Remove form from screen
-    document.getElementById("dino-compare").style.visibility = "hidden"; 
-	    
-	// Generate Tiles for each Dino in Array
-    let factIdx = getRandomInt(dinos.length);
-    let fact = dinos[factIdx]["fact"];
-	
+    // Remove form from screen
+    document.getElementById("dino-compare").style.visibility = "hidden";
+
+    // Generate Tiles for each Dino in Array
+    // Let factIdx = getRandomInt(dinos.length);
+
     function addTile(imageURL, factTxt, titleTxt){
         let item = document.createElement("div");
         let imageItem = document.createElement("img");
@@ -94,7 +93,7 @@ document.addEventListener("DOMContentLoaded",
 
         item.appendChild(titleItem);
         item.appendChild(imageItem);
-        
+
         if(factTxt){
             let factItem = document.createElement("p");
             factItem.innerText = factTxt;
@@ -104,11 +103,13 @@ document.addEventListener("DOMContentLoaded",
         return item;
     }
 
-	// Add tiles to DOM
-    grid = document.getElementById("grid");
-    for(let idx=0;idx<9;idx++){ 
+    // Add tiles to DOM
+    let grid = document.getElementById("grid");
+    for(let idx=0;idx<9;idx++){
         let fact;
         let img_path;
+        let title;
+        let image_basename;
         if(idx < 4 ){
             image_basename =  dinos[idx].species;
             fact = dinos[idx].fact;
@@ -128,7 +129,7 @@ document.addEventListener("DOMContentLoaded",
         img_path = "images/" + image_basename.toLowerCase() + ".png";
         grid.appendChild(addTile(img_path, fact, title));
     }
-        
-	}	
-	
+
+    }
+
 });
